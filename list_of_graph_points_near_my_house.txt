@@ -1,4 +1,4 @@
-#id point_name position_in_metros y x
+#id point_name y x
 0 my_house -20.287962 -40.403812
 1 point_1_entrt_entry -20.287832 -40.403753
 2 point_2_right_entry -20.287698 -40.404030
