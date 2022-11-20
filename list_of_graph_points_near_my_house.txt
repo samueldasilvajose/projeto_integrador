@@ -1,0 +1,25 @@
+#id point_name position_in_metros y x
+0 my_house -20.287962 -40.403812
+1 point_1_entrt_entry -20.287832 -40.403753
+2 point_2_right_entry -20.287698 -40.404030
+3 point_1_entry -20.287480 -40.404109
+4 point_2_entry -20.287494 -40.404193
+5 bus_stop_1 -20.287573 -40.404230
+#
+*1 point_1_entrt_entry -20.287832 -40.403753
+6 point_2_right_entry -20.287373 -40.403459
+7 point_3_right_entry -20.287135 -40.403324
+8 point_4_right_entry -20.287028 -40.403472
+9 point_5_right_entry -20.287309 -40.403806
+*3 point_1_entry -20.287480 -40.404109
+#
+*0 my_house -20.287962 -40.403812
+10 point_2_left_entry -20.288795 -40.404363
+11 point_3_left_entry -20.288504 -40.404859
+12 point_4_left_entry -20.288529 -40.404948
+13 point_5_left_entry -20.288439 -40.405013
+14 point_6_left_entry -20.288371 -40.405090
+15 point_7_left_entry -20.288398 -40.405218
+16 point_7_left_entry -20.288708 -40.405535
+17 bus_stop_2 -20.289072 -40.405882
+#
