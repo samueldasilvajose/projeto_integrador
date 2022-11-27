@@ -110,8 +110,7 @@ def conversion_grau_dec_metros(point):
     new_poit = []
 
     for i in point:
-        new_x = i[0]
-        new_y = i[1]
+        (new_x, new_y) = i
 
         new_poit.append((new_x * (60**2 * 30.87), new_y * (60**2 * 30.87)))
 
@@ -168,23 +167,30 @@ def route_generator(destination_point_list):
 
             codec = check_conversion(str_route_split[0], int) + check_conversion(str_route_split[-1], int)
             
-            file_w.write(f"{str_route_split[0]} {str_route_split[-1]}  route_my_house_{codec}  {tamanho_percurso}  {str_route}\n")
+            file_w.write(f"route_my_house_{codec}  {tamanho_percurso}  {str_route}\n")
 
             cont += 1
 
     file_w.close()
 
 
-def edge_creator(list_of_id_and_position_in_meter):
-    for i in range(len(list_of_id_and_position_in_meter) - 1):
-        graus_in_metros = conversion_grau_dec_metros([list_of_id_and_position_in_meter[i], 
-        list_of_id_and_position_in_meter[i + 1]])
+def edge_creator(list_of_id_and_position):
+    x_and_y_in_metros = conversion_grau_dec_metros(list_of_id_and_position)
 
-        len_distancia = heuristic_based_on_the_distance_between_points(graus_in_metros[0], graus_in_metros[1])
+    for i in range(len(x_and_y_in_metros) - 1):
+        len_distancia = heuristic_based_on_the_distance_between_points(x_and_y_in_metros[i], x_and_y_in_metros[i + 1])
+
         #add uma vertice ponderada
-        G.add_edge(list_of_id_and_position_in_meter[i], list_of_id_and_position_in_meter[i + 1],
+        G.add_edge(x_and_y_in_metros[i], x_and_y_in_metros[i + 1],
          weight=len_distancia)
-         
+
+
+def node_creator(nodes, nodes_id):
+    x_and_y_in_metros = conversion_grau_dec_metros(nodes)
+
+    for i, j in zip(x_and_y_in_metros, nodes_id):
+        G.add_node(i, id = j)
+
 
 def graph_creator(file_name, destination_point):
     id_node = ""  
@@ -193,19 +199,27 @@ def graph_creator(file_name, destination_point):
 
     flag_node_repetition = True
 
+    nodes = []
+    nodes_id = []
     node_elements = []
     destination_point_list = []
-    list_of_id_and_position_in_meter = []
+    list_of_id_and_position = []
 
     for i in file_r:
         string_without_tab = i.strip()
 
         #tratamento das linhas que começão com #
         if(string_without_tab[0] == '#'):
-            if (list_of_id_and_position_in_meter):
-                edge_creator(list_of_id_and_position_in_meter)
+            if (list_of_id_and_position):
+                #criando nó
+                node_creator(nodes, nodes_id)
 
-                list_of_id_and_position_in_meter = []
+                #criando aresta
+                edge_creator(list_of_id_and_position)
+
+                nodes = []
+                nodes_id = []
+                list_of_id_and_position = []
 
             continue
 
@@ -216,10 +230,10 @@ def graph_creator(file_name, destination_point):
 
             x = check_conversion(node_elements[3], float)
             y = check_conversion(node_elements[2], float)
-            id_node = node_elements[0]
+            id_node = check_conversion(node_elements[0], int)
 
-            #criando nó
-            G.add_node((x, y), id = id_node)
+            nodes.append((x, y))
+            nodes_id.append(id_node)
 
         else:
             node_elements = string_without_tab[1:].split(' ')
@@ -230,11 +244,12 @@ def graph_creator(file_name, destination_point):
             flag_node_repetition = False 
 
         if (destination_point in node_elements[1] and flag_node_repetition):
-            destination_point_list.append(((x, y), id_node))
+            aux_conv = conversion_grau_dec_metros([(x, y)])
+            destination_point_list.append((aux_conv[0], id_node))
 
         flag_node_repetition = True    
         
-        list_of_id_and_position_in_meter.append((x, y))
+        list_of_id_and_position.append((x, y))
     
     file_r.close()
 
@@ -257,7 +272,7 @@ def main():
     destination_point = "bus_stop_"
 
     #fazendo um novo arquivo .png 
-    if (not file_png):
+    if (file_png != "None"):
         file_r = check_file(file_png, "r")
         file_r.close()
 
